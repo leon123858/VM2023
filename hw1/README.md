@@ -2,13 +2,15 @@
 
 ## init env
 
+suppose you are run in ARMv8 VM
+
 ### install tool
 
 note: should start container
 
 ```
 # 安裝相依工具
-sudo ./install_tools.sh
+sudo bash ./install_tools.sh
 ```
 
 ### install qemu
@@ -27,8 +29,7 @@ make -j8 && make install
 git clone --depth 1 --branch v5.15 https://github.com/torvalds/linux.git
 cd linux
 # can edit your own KVM here
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j4
+make defconfig && make -j8
 ```
 
 ### Create virtual disk image
