@@ -1,0 +1,59 @@
+diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+index fe102cd2e..5c8659469 100644
+--- a/arch/arm64/kvm/arm.c
++++ b/arch/arm64/kvm/arm.c
+@@ -2110,7 +2110,7 @@ int kvm_arch_init(void *opaque)
+ 	} else {
+ 		kvm_info("Hyp mode initialized successfully\n");
+ 	}
+-
++	printk("this is my KVM r11922114\n");
+ 	return 0;
+ 
+ out_hyp:
+diff --git a/arch/arm64/kvm/hyp/entry.S b/arch/arm64/kvm/hyp/entry.S
+index 435346ea1..2b3dc918e 100644
+--- a/arch/arm64/kvm/hyp/entry.S
++++ b/arch/arm64/kvm/hyp/entry.S
+@@ -76,6 +76,41 @@ alternative_else_nop_endif
+ 	ldp	x14, x15, [x29, #CPU_XREG_OFFSET(14)]
+ 	ldp	x16, x17, [x29, #CPU_XREG_OFFSET(16)]
+ 
++	cmp x0, #0x00000000
++	bne hw1skip
++	ldr x0, =0x01010101
++	cmp x1, x0
++	bne hw1
++	ldr x0, =0x20202020
++	cmp x2, x0
++	bne hw1
++	ldr x0, =0x03030303
++	cmp x3, x0
++	bne hw1
++	ldr x0, =0x40404040
++	cmp x4, x0
++	bne hw1
++	ldr x0, =0x05050505
++	cmp x5, x0
++	bne hw1
++	ldr x0, =0x60606060
++	cmp x6, x0
++	bne hw1
++	ldr x0, =0x07070707
++	cmp x7, x0
++	bne hw1
++	ldr x0, =0x80808080
++	cmp x8, x0
++	bne hw1
++	ldr x0, =0x09090909
++	cmp x9, x0
++	bne hw1
++	mov x0, #0x00000001
++	b hw1skip
++hw1:
++	mov x0, #0x00000000
++hw1skip:
++
+ 	// Restore guest regs x18-x29, lr
+ 	restore_callee_saved_regs x29
+ 

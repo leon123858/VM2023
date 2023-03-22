@@ -26,10 +26,12 @@ make -j8 && make install
 ### install KVM
 
 ```
+sudo apt-get install gcc-aarch64-linux-gnu
 git clone --depth 1 --branch v5.15 https://github.com/torvalds/linux.git
 cd linux
 # can edit your own KVM here
-make defconfig && make -j8
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8
 ```
 
 ### Create virtual disk image
