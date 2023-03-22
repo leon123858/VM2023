@@ -50,7 +50,27 @@ umount /mnt
 ```
 
 ## Run KVM host
-
+note: 只要看到有 login 出來, 就可以直接輸入帳號 `root` login 了
 ```
 ./run-kvm.sh -k ./linux/arch/arm64/boot/Image -i ./cloud.img
+```
+
+## 常用指令筆記
+
+清除殭屍虛擬機
+```
+sudo netstat -lpn |grep 2222
+sudo kill -9 pid
+```
+
+part2
+```
+// open ssh
+dhclient
+// move new KVM
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8
+scp -P 2222 ./myKVM/linux/arch/arm64/boot/Image root@localhost:/root
+// run guest
+ssh root@localhost -p 2222
+sudo bash ./run-guest.sh -k ./Image  -i ./cloud_inner.img
 ```
