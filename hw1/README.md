@@ -48,7 +48,7 @@ umount /mnt
 ```
 
 ## Run KVM host
-
+note: 只要看到有 login 出來, 就可以直接輸入帳號 `root` login 了
 ```
 ./run-kvm.sh -k ./linux/arch/arm64/boot/Image -i ./cloud.img
 ```
