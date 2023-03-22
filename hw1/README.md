@@ -69,5 +69,6 @@ dhclient
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8
 scp -P 2222 ./myKVM/linux/arch/arm64/boot/Image root@localhost:/root
 // run guest
+ssh root@localhost -p 2222
 sudo bash ./run-guest.sh -k ./Image  -i ./cloud_inner.img
 ```
