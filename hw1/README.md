@@ -55,6 +55,38 @@ note: 只要看到有 login 出來, 就可以直接輸入帳號 `root` login 了
 ./run-kvm.sh -k ./linux/arch/arm64/boot/Image -i ./cloud.img
 ```
 
+## set KVM host ssh
+
+登入後直接操作
+
+```
+# 更新 ssh server 設置
+dpkg-reconfigure openssh-server
+# 要完成 ssh server 設置更改(內容後述)
+sudo vim  /etc/ssh/sshd_config
+# 更新 ssh server 設置
+dpkg-reconfigure openssh-server
+```
+
+sshd_config update item
+
+```
+# 允許管理者登入
+PermitRootLogin yes
+# 關閉公鑰登入
+PubkeyAuthentication no
+# 啟動密碼登入
+PasswordAuthentication yes
+# 允許無密碼
+PermitEmptyPasswords yes
+```
+
+設置完成後可以用以下指令直接登入
+
+new KVM host should use `dhclient` init ssh IP
+
+each ssh client use `ssh root@localhost -p 2222` to connect
+
 ## 常用指令筆記
 
 清除殭屍虛擬機
