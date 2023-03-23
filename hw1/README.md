@@ -92,7 +92,7 @@ each ssh client use `ssh root@localhost -p 2222` to connect
 
 ## set inside VM
 
-再內部 VM
+在內部 VM (host VM)
 
 ```
 # 創建安裝相依腳本 內容複製 ./install_tools.sh
