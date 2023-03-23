@@ -26,6 +26,7 @@ make -j8 && make install
 ### install KVM
 
 ```
+# ARM 主機上不用安裝下一行
 sudo apt-get install gcc-aarch64-linux-gnu
 git clone --depth 1 --branch v5.15 https://github.com/torvalds/linux.git
 cd linux
@@ -33,6 +34,8 @@ cd linux
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8
 ```
+
+note: arm 主機上末兩行可以改為 `make defconfig && make -j8`
 
 ### Create virtual disk image
 
@@ -86,6 +89,42 @@ PermitEmptyPasswords yes
 new KVM host should use `dhclient` init ssh IP
 
 each ssh client use `ssh root@localhost -p 2222` to connect
+
+## set inside VM
+
+再內部 VM
+
+```
+# 創建安裝相依腳本 內容複製 ./install_tools.sh
+vim install.sh
+# 安裝
+sudo bash install.sh
+# 安裝 qemu
+git clone https://gitlab.com/qemu-project/qemu.git
+cd qemu/
+git checkout tags/v7.0.0
+./configure --target-list=aarch64-softmmu --disable-werror
+make -j8
+sudo make install
+# create inner VM disk
+qemu-img create -f raw cloud_inner.img 2g
+mkfs.ext4 cloud_inner.img
+sudo mount cloud_inner.img /mnt
+sudo tar xvf ./ubuntu-20.04-server-cloudimg-arm64-root.tar.xz -C /mnt
+sync
+sudo touch /mnt/etc/cloud/cloud-init.disabled
+# 編輯第一行, 把 root 設為沒密碼同上一階段行為
+sudo vim /mnt/etc/passwd
+sudo umount /mnt
+# 把 virtual 硬碟放進 VM
+scp -P 2222 cloud_inner.img root@localhost:/root
+# 把 KVM 放進 VM
+scp -P 2222 ./linux/arch/arm64/boot/Image root@localhost:/root
+# 把跑 guest 腳本放入 guest VM
+scp -P 2222 $PATH_TO_FILES/run-guest.sh root@localhost:/root
+# 執行 guest VM
+./run-guest.sh -k ./Image -i ./cloud_inner.img
+```
 
 ## 常用指令筆記
 
