@@ -134,14 +134,9 @@ sudo netstat -lpn |grep 2222
 sudo kill -9 pid
 ```
 
-part2
-```
-// open ssh
-dhclient
-// move new KVM
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8
-scp -P 2222 ./myKVM/linux/arch/arm64/boot/Image root@localhost:/root
-// run guest
-ssh root@localhost -p 2222
-sudo bash ./run-guest.sh -k ./Image  -i ./cloud_inner.img
-```
+## part 2 作業訣竅
+
+要改的虛擬機是佈置在 ubuntu linux 裡面的 VM, 不是最中間的 VM,
+因為最中間的 VM 啟動不完整, 不會觸發 content switch,
+要改的 code 是在 restore general reg 時檢測特定的 pattern, 
+再強制變更目標 reg , 過程皆需使用 ARM 組合語言
