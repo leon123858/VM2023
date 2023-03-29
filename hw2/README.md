@@ -6,6 +6,8 @@
 make -C ./tools/vm/
 # x86 compile tool
 make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C ./tools/vm/
+# move tool into host vm
+scp -P 2222 -r ./linux/tools/vm/page-types  root@localhost:/root
 ```
 their will be a tool called page-types in `linux/tools/vm`
 
