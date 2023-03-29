@@ -47,10 +47,10 @@ index a067410eb..f1edc2195 100644
   * ioctls for /dev/kvm fds:
   */
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 7851f3a1b..e6e7328b2 100644
+index 7851f3a1b..bbfc34d3d 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
-@@ -4653,6 +4653,41 @@ static int kvm_dev_ioctl_create_vm(unsigned long type)
+@@ -4653,6 +4653,42 @@ static int kvm_dev_ioctl_create_vm(unsigned long type)
  	return r;
  }
  
@@ -66,6 +66,7 @@ index 7851f3a1b..e6e7328b2 100644
 +	list_for_each_entry (kvm, &vm_list, vm_list) {
 +		printk("kvm vmid : %d", kvm->arch.mmu.vmid.vmid);
 +	}
++	printk("show kvm vmid end!");
 +	mutex_unlock(&kvm_lock);
 +
 +	return;
@@ -92,7 +93,7 @@ index 7851f3a1b..e6e7328b2 100644
  static long kvm_dev_ioctl(struct file *filp,
  			  unsigned int ioctl, unsigned long arg)
  {
-@@ -4664,6 +4699,23 @@ static long kvm_dev_ioctl(struct file *filp,
+@@ -4664,6 +4700,28 @@ static long kvm_dev_ioctl(struct file *filp,
  			goto out;
  		r = KVM_API_VERSION;
  		break;
@@ -108,8 +109,13 @@ index 7851f3a1b..e6e7328b2 100644
 +			r = 0;
 +			break;
 +		}
-+		// printk("target kvm cpu count: %d", target_vm->created_vcpus);
-+		// printk("target kvm id: %d", target_vm->arch.mmu.vmid.vmid);
++		// kvm_vcpu_write_guest 變更 vcpu (存數據)
++		kvm_vcpu_write_guest(target_vm->vcpus[0], gpa_para_struct->gpa,
++				     (void *)gpa_para_struct->data, gpa_para_struct->size);
++		// 用 kvm_make_request (check_vcpu_requests) 創造中斷, request CPU pending
++		kvm_make_request(KVM_REQ_SLEEP, target_vm->vcpus[0]);
++		// 用 kvm_vcpu_kick 叫醒 CPU (optional 可以被動等待 VMM 叫醒)
++		kvm_vcpu_kick(target_vm->vcpus[0]);
 +		
 +		r = 0;
 +		break;
