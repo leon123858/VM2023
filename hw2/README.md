@@ -19,3 +19,8 @@ sudo bash ./run-kvm.sh -k ./linux/arch/arm64/boot/Image -i ./cloud.img
 # guest vm
 sudo bash ./run-guest.sh -k ./Image -i ./cloud_inner.img
 ```
+
+看 log
+```
+dmesg | grep -i kvm
+```
