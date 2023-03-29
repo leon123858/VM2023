@@ -23,22 +23,76 @@ index a067410eb..f1edc2195 100644
   * ioctls for /dev/kvm fds:
   */
 diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
-index a067410eb..1291c248e 100644
+index a067410eb..f1edc2195 100644
 --- a/tools/include/uapi/linux/kvm.h
 +++ b/tools/include/uapi/linux/kvm.h
-@@ -863,6 +863,7 @@ struct kvm_ppc_resize_hpt {
+@@ -863,6 +863,19 @@ struct kvm_ppc_resize_hpt {
  #define KVM_VM_TYPE_ARM_IPA_SIZE_MASK	0xffULL
  #define KVM_VM_TYPE_ARM_IPA_SIZE(x)		\
  	((x) & KVM_VM_TYPE_ARM_IPA_SIZE_MASK)
++
++/**
++ * vm class
++ */
++struct kvm_arm_write_gpa_args {
++       uint32_t vmid;  // the vmid that you, as the host, want to write to
++       uint64_t gpa;   // the gpa of the guest
++       uint64_t data;  // address of the payload in host user space
++       uint64_t size;  // size of the payload
++};
++
++#define KVM_ARM_WRITE_GPA         _IOW(KVMIO,   0xfe, struct kvm_arm_write_gpa_args)
 +
  /*
   * ioctls for /dev/kvm fds:
   */
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 7851f3a1b..4768b167b 100644
+index 7851f3a1b..e6e7328b2 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
-@@ -4664,6 +4664,13 @@ static long kvm_dev_ioctl(struct file *filp,
+@@ -4653,6 +4653,41 @@ static int kvm_dev_ioctl_create_vm(unsigned long type)
+ 	return r;
+ }
+ 
++/**
++ * vm class
++*/
++// 展示所有 vmid
++static void show_vm_vid(void)
++{
++	struct kvm *kvm;
++	mutex_lock(&kvm_lock);
++	printk("show kvm vmid start:");
++	list_for_each_entry (kvm, &vm_list, vm_list) {
++		printk("kvm vmid : %d", kvm->arch.mmu.vmid.vmid);
++	}
++	mutex_unlock(&kvm_lock);
++
++	return;
++}
++
++// 獲取 id 符合的 VM pointer
++static struct kvm * get_vm_by_id(uint32_t vmid)
++{
++	struct kvm *kvm;
++	struct kvm *target_vm = 0;
++
++	mutex_lock(&kvm_lock);
++	list_for_each_entry (kvm, &vm_list, vm_list) {
++		if (kvm->arch.mmu.vmid.vmid == vmid) {
++			target_vm = kvm;
++		}
++	}
++	mutex_unlock(&kvm_lock);
++
++	return target_vm;
++}
++
++
+ static long kvm_dev_ioctl(struct file *filp,
+ 			  unsigned int ioctl, unsigned long arg)
+ {
+@@ -4664,6 +4699,23 @@ static long kvm_dev_ioctl(struct file *filp,
  			goto out;
  		r = KVM_API_VERSION;
  		break;
@@ -46,7 +100,17 @@ index 7851f3a1b..4768b167b 100644
 + 	 * vm class
 + 	 */
 +	case KVM_ARM_WRITE_GPA:
-+		printk("KVM_ARM_WRITE_GPA: %d", ((struct kvm_arm_write_gpa_args*)(void*)arg)->vmid);
++		struct kvm_arm_write_gpa_args *gpa_para_struct = (struct kvm_arm_write_gpa_args*)(void *)arg;
++		struct kvm *target_vm = get_vm_by_id(gpa_para_struct->vmid);
++		if (!target_vm) {
++			printk("kvm error: can not find target vm");
++			show_vm_vid();
++			r = 0;
++			break;
++		}
++		// printk("target kvm cpu count: %d", target_vm->created_vcpus);
++		// printk("target kvm id: %d", target_vm->arch.mmu.vmid.vmid);
++		
 +		r = 0;
 +		break;
  	case KVM_CREATE_VM:
