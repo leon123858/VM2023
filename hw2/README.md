@@ -1,15 +1,16 @@
 # HW2
 
 ## 獲取 guest VM address
+
+use in vm host
+
 ```
-# Arm compile linux tool
+git clone --depth 1 --branch v5.15 https://github.com/torvalds/linux.git
+cd linux
+# their will be a tool called page-types in `linux/tools/vm`
 make -C ./tools/vm/
-# x86 compile tool
-make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C ./tools/vm/
-# move tool into host vm
-scp -P 2222 -r ./linux/tools/vm/page-types  root@localhost:/root
+mv ./tools/vm/page-types ../page-types
 ```
-their will be a tool called page-types in `linux/tools/vm`
 
 ## 常用指令筆記
 
@@ -43,5 +44,6 @@ git diff > hw2.patch
 
 find all mappings from virtual page number to physical frame number of a process using (gpa)
 ```
+pidof <process name>
 ./page-types -p <pid> -L
 ```
