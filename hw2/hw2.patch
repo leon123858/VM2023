@@ -1,0 +1,54 @@
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index a067410eb..f1edc2195 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -863,6 +863,19 @@ struct kvm_ppc_resize_hpt {
+ #define KVM_VM_TYPE_ARM_IPA_SIZE_MASK	0xffULL
+ #define KVM_VM_TYPE_ARM_IPA_SIZE(x)		\
+ 	((x) & KVM_VM_TYPE_ARM_IPA_SIZE_MASK)
++
++/**
++ * vm class
++ */
++struct kvm_arm_write_gpa_args {
++       uint32_t vmid;  // the vmid that you, as the host, want to write to
++       uint64_t gpa;   // the gpa of the guest
++       uint64_t data;  // address of the payload in host user space
++       uint64_t size;  // size of the payload
++};
++
++#define KVM_ARM_WRITE_GPA         _IOW(KVMIO,   0xfe, struct kvm_arm_write_gpa_args)
++
+ /*
+  * ioctls for /dev/kvm fds:
+  */
+diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
+index a067410eb..1291c248e 100644
+--- a/tools/include/uapi/linux/kvm.h
++++ b/tools/include/uapi/linux/kvm.h
+@@ -863,6 +863,7 @@ struct kvm_ppc_resize_hpt {
+ #define KVM_VM_TYPE_ARM_IPA_SIZE_MASK	0xffULL
+ #define KVM_VM_TYPE_ARM_IPA_SIZE(x)		\
+ 	((x) & KVM_VM_TYPE_ARM_IPA_SIZE_MASK)
++
+ /*
+  * ioctls for /dev/kvm fds:
+  */
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 7851f3a1b..4768b167b 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -4664,6 +4664,13 @@ static long kvm_dev_ioctl(struct file *filp,
+ 			goto out;
+ 		r = KVM_API_VERSION;
+ 		break;
++	/**
++ 	 * vm class
++ 	 */
++	case KVM_ARM_WRITE_GPA:
++		printk("KVM_ARM_WRITE_GPA: %d", ((struct kvm_arm_write_gpa_args*)(void*)arg)->vmid);
++		r = 0;
++		break;
+ 	case KVM_CREATE_VM:
+ 		r = kvm_dev_ioctl_create_vm(arg);
+ 		break;
