@@ -9,7 +9,7 @@ ssh root@localhost -p 2222
 
 把 ioctl client 移入虛擬機
 ```
-scp -P 2222 ./client/client  root@localhost:/root
+scp -P 2222 -r ./client root@localhost:/root
 ```
 
 執行 VM
