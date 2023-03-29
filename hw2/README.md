@@ -24,3 +24,8 @@ sudo bash ./run-guest.sh -k ./Image -i ./cloud_inner.img
 ```
 dmesg | grep -i kvm
 ```
+
+導出 patch
+```
+git diff > hw2.patch
+``
