@@ -1,5 +1,14 @@
 # HW2
 
+## 獲取 guest VM address
+```
+# Arm compile linux tool
+make -C ./tools/vm/
+# x86 compile tool
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -C ./tools/vm/
+```
+their will be a tool called page-types in `linux/tools/vm`
+
 ## 常用指令筆記
 
 登入 VM
@@ -28,4 +37,9 @@ dmesg | grep -i kvm
 導出 patch
 ```
 git diff > hw2.patch
+```
+
+find all mappings from virtual page number to physical frame number of a process using (gpa)
+```
+./page-types -p <pid> -L
 ```
