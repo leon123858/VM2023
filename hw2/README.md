@@ -1,4 +1,37 @@
 # HW2
+## part2-1
+
+被篡改的客戶端
+```c
+// sheep.c
+int main() {
+        while (1) {}
+}
+```
+
+Makefile
+```
+CC      = gcc
+CFLAGS  = -g
+RM      = rm -f
+
+
+default: all
+
+all: Sheep
+
+Sheep: sheep.c
+        $(CC) $(CFLAGS) -o sheep sheep.c
+```
+
+process:
+1. create in guest VM
+2. compile and run sheep
+
+in host VM
+
+1. use page-types find target MEM
+2. execute client/client to edit mem by new ioctl
 
 ## 獲取 guest VM address
 
