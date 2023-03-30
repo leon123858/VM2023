@@ -4,6 +4,26 @@
 
 suppose you are run in ARMv8 VM
 
+### set UTM VM
+```
+# install live server
+# after reboot in first execute, 會發現卡在黑畫面, 退出磁碟, 接著關機, 再重開
+# 利用官方教學安裝 desktop
+```
+
+進入 VM 後
+```
+# 安裝軟件管理
+sudo apt install synaptic
+# 利用 GUI 安裝 firefox
+# 利用 firefox 下載 vscode
+# 安裝 vscode
+sudo dpkg -i <vscode name>.deb
+# 下載 gh
+# 移除 警告 for qeum
+sudo apt-get purge needrestart
+```
+
 ### install tool
 
 note: should start container
