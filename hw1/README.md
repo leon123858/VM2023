@@ -119,7 +119,7 @@ each ssh client use `ssh root@localhost -p 2222` to connect
 vim install.sh
 # 安裝
 sudo bash install.sh
-# 安裝 qemu
+# 安裝 qemu (可用 `apt install qemu-system-arm qemu` 取代, 但可能有 bug)
 git clone https://gitlab.com/qemu-project/qemu.git
 cd qemu/
 git checkout tags/v7.0.0
