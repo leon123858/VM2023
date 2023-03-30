@@ -1,2 +1,2 @@
 all:
-	gcc -o client client.cpp
+	gcc -o myclient myclient.cpp
