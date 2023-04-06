@@ -92,7 +92,7 @@ index a067410eb..f1edc2195 100644
   * ioctls for /dev/kvm fds:
   */
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 7851f3a1b..a4b9a3ea0 100644
+index 7851f3a1b..4ed88b463 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
 @@ -2914,7 +2914,9 @@ int kvm_vcpu_write_guest(struct kvm_vcpu *vcpu, gpa_t gpa, const void *data,
@@ -154,7 +154,7 @@ index 7851f3a1b..a4b9a3ea0 100644
  static long kvm_dev_ioctl(struct file *filp,
  			  unsigned int ioctl, unsigned long arg)
  {
-@@ -4664,6 +4707,31 @@ static long kvm_dev_ioctl(struct file *filp,
+@@ -4664,6 +4707,33 @@ static long kvm_dev_ioctl(struct file *filp,
  			goto out;
  		r = KVM_API_VERSION;
  		break;
@@ -162,6 +162,7 @@ index 7851f3a1b..a4b9a3ea0 100644
 + 	 * vm class
 + 	 */
 +	case KVM_ARM_WRITE_GPA:
++	{
 +		struct kvm_arm_write_gpa_args *gpa_para_struct = (struct kvm_arm_write_gpa_args*)(void *)arg;
 +		struct kvm *target_vm = get_vm_by_id(gpa_para_struct->vmid);
 +		if (!target_vm) {
@@ -183,6 +184,7 @@ index 7851f3a1b..a4b9a3ea0 100644
 +		printk("kvm success: update vm end (pending, wait for checked)\n");
 +		r = 0;
 +		break;
++	}
  	case KVM_CREATE_VM:
  		r = kvm_dev_ioctl_create_vm(arg);
  		break;
