@@ -1,45 +1,45 @@
 diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index fe102cd2e..ef83a8f6d 100644
+index fe102cd2e..0ad101524 100644
 --- a/arch/arm64/kvm/arm.c
 +++ b/arch/arm64/kvm/arm.c
-@@ -689,7 +689,7 @@ static void check_vcpu_requests(struct kvm_vcpu *vcpu)
+@@ -688,7 +688,26 @@ static void check_vcpu_requests(struct kvm_vcpu *vcpu)
+ 		 * Clear IRQ_PENDING requests that were made to guarantee
  		 * that a VCPU sees new virtual interrupts.
  		 */
- 		kvm_check_request(KVM_REQ_IRQ_PENDING, vcpu);
--
-+		
+-		kvm_check_request(KVM_REQ_IRQ_PENDING, vcpu);
++		if(kvm_check_request(KVM_REQ_IRQ_PENDING, vcpu)){
++			/**
++			 * vm class
++			 * kvm_vcpu_write_guest 變更 vcpu (存數據) should be execute in check_vcpu_requests
++			 */
++			if (vm_class_is_trigger == 1 && vm_class_target_vcpu == vcpu) {
++				printk("kvm info: check vm_class trigger!\n");
++				int ret = kvm_vcpu_write_guest(vcpu, vm_class_gpa, vm_class_data, vm_class_size);
++				if(ret < 0){
++					printk("kvm error: error code for write vm mem %d \n", ret);
++					printk("kvm error: can not write to guest mem %llx \n", vm_class_gpa);
++				} else {
++					printk("kvm info: set mem in vm success\n");
++				}
++				vm_class_target_vcpu = 0;
++				vm_class_is_trigger = 0;
++				vm_class_gpa = 0;
++				vm_class_size = 0;
++			}
++		}
+ 
  		if (kvm_check_request(KVM_REQ_RECORD_STEAL, vcpu))
  			kvm_update_stolen_time(vcpu);
- 
-@@ -704,6 +704,26 @@ static void check_vcpu_requests(struct kvm_vcpu *vcpu)
+@@ -704,6 +723,7 @@ static void check_vcpu_requests(struct kvm_vcpu *vcpu)
  		if (kvm_check_request(KVM_REQ_RELOAD_PMU, vcpu))
  			kvm_pmu_handle_pmcr(vcpu,
  					    __vcpu_sys_reg(vcpu, PMCR_EL0));
 +		
-+		/**
-+		 * vm class
-+		 * kvm_vcpu_write_guest 變更 vcpu (存數據) should be execute in check_vcpu_requests
-+		 */
-+		if (vm_class_is_trigger == 1 && vm_class_target_vcpu == vcpu) {
-+			printk("kvm info: check vm_class trigger!\n");
-+			int ret = kvm_vcpu_write_guest(vcpu, vm_class_gpa, (void *)vm_class_data, vm_class_size);
-+			if(ret < 0){
-+				printk("kvm error: error code for write vm mem %d \n", ret);
-+				printk("kvm error: can not write to guest mem %llx \n", vm_class_gpa);
-+			} else {
-+				printk("kvm info: set mem in vm success\n");
-+			}
-+			vm_class_target_vcpu = 0;
-+			vm_class_is_trigger = 0;
-+			vm_class_gpa = 0;
-+			vm_class_data = 0;
-+			vm_class_size = 0;
-+		}
  	}
  }
  
 diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-index a067410eb..5fce0caa1 100644
+index a067410eb..3c83f9f71 100644
 --- a/include/uapi/linux/kvm.h
 +++ b/include/uapi/linux/kvm.h
 @@ -863,6 +863,25 @@ struct kvm_ppc_resize_hpt {
@@ -53,7 +53,7 @@ index a067410eb..5fce0caa1 100644
 +extern struct kvm_vcpu *vm_class_target_vcpu;
 +extern int vm_class_is_trigger;
 +extern uint64_t vm_class_gpa;
-+extern uint64_t vm_class_data;
++extern char vm_class_data[1024];
 +extern uint64_t vm_class_size;
 +
 +struct kvm_arm_write_gpa_args {
@@ -93,7 +93,7 @@ index a067410eb..f1edc2195 100644
   * ioctls for /dev/kvm fds:
   */
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 7851f3a1b..5b33c0285 100644
+index 7851f3a1b..eb1011412 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
 @@ -2914,7 +2914,9 @@ int kvm_vcpu_write_guest(struct kvm_vcpu *vcpu, gpa_t gpa, const void *data,
@@ -117,7 +117,7 @@ index 7851f3a1b..5b33c0285 100644
 +struct kvm_vcpu *vm_class_target_vcpu = 0;
 +int vm_class_is_trigger = 0;
 +uint64_t vm_class_gpa = 0;
-+uint64_t vm_class_data = 0;
++char vm_class_data[1024];
 +uint64_t vm_class_size = 0;
 +
 +// 展示所有 vmid
@@ -175,10 +175,10 @@ index 7851f3a1b..5b33c0285 100644
 +		vm_class_target_vcpu = target_vm->vcpus[0];
 +		vm_class_is_trigger = 1;
 +		vm_class_gpa = gpa_para_struct->gpa;
-+		vm_class_data = gpa_para_struct->data;
 +		vm_class_size = gpa_para_struct->size;
++		memcpy(vm_class_data, gpa_para_struct->data, vm_class_size);
 +		// 用 kvm_make_request 創造中斷, request CPU pending (other ioctl req will use "check_vcpu_requests" than handle write guset in it)
-+		kvm_make_request(KVM_REQ_SLEEP, vm_class_target_vcpu);
++		kvm_make_request(KVM_REQ_IRQ_PENDING, vm_class_target_vcpu);
 +		// 用 kvm_vcpu_kick 叫醒 CPU (optional 可以被動等待 VMM 叫醒)
 +		kvm_vcpu_kick(vm_class_target_vcpu);
 +		printk("kvm success: update vm end (pending, wait for checked)\n");
