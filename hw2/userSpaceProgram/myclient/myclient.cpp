@@ -22,7 +22,8 @@ struct kvm_arm_write_gpa_args {
 
 int main() {
   const char *data = "I am cool baby.";
-  struct kvm_arm_write_gpa_args tmp = {1, 0, (uint64_t)data, sizeof(data)};
+  struct kvm_arm_write_gpa_args tmp = {1, 0, (uint64_t)data,
+                                       strlen(data) * sizeof(char)};
   int fd;
   int32_t value, number;
   printf("*********************************\n");
