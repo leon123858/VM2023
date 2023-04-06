@@ -1,8 +1,8 @@
 diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-index fe102cd2e..0ad101524 100644
+index fe102cd2e..a583a70db 100644
 --- a/arch/arm64/kvm/arm.c
 +++ b/arch/arm64/kvm/arm.c
-@@ -688,7 +688,26 @@ static void check_vcpu_requests(struct kvm_vcpu *vcpu)
+@@ -688,7 +688,25 @@ static void check_vcpu_requests(struct kvm_vcpu *vcpu)
  		 * Clear IRQ_PENDING requests that were made to guarantee
  		 * that a VCPU sees new virtual interrupts.
  		 */
@@ -13,7 +13,6 @@ index fe102cd2e..0ad101524 100644
 +			 * kvm_vcpu_write_guest 變更 vcpu (存數據) should be execute in check_vcpu_requests
 +			 */
 +			if (vm_class_is_trigger == 1 && vm_class_target_vcpu == vcpu) {
-+				printk("kvm info: check vm_class trigger!\n");
 +				int ret = kvm_vcpu_write_guest(vcpu, vm_class_gpa, vm_class_data, vm_class_size);
 +				if(ret < 0){
 +					printk("kvm error: error code for write vm mem %d \n", ret);
@@ -30,7 +29,7 @@ index fe102cd2e..0ad101524 100644
  
  		if (kvm_check_request(KVM_REQ_RECORD_STEAL, vcpu))
  			kvm_update_stolen_time(vcpu);
-@@ -704,6 +723,7 @@ static void check_vcpu_requests(struct kvm_vcpu *vcpu)
+@@ -704,6 +722,7 @@ static void check_vcpu_requests(struct kvm_vcpu *vcpu)
  		if (kvm_check_request(KVM_REQ_RELOAD_PMU, vcpu))
  			kvm_pmu_handle_pmcr(vcpu,
  					    __vcpu_sys_reg(vcpu, PMCR_EL0));
@@ -93,7 +92,7 @@ index a067410eb..f1edc2195 100644
   * ioctls for /dev/kvm fds:
   */
 diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 7851f3a1b..eb1011412 100644
+index 7851f3a1b..a4b9a3ea0 100644
 --- a/virt/kvm/kvm_main.c
 +++ b/virt/kvm/kvm_main.c
 @@ -2914,7 +2914,9 @@ int kvm_vcpu_write_guest(struct kvm_vcpu *vcpu, gpa_t gpa, const void *data,
@@ -168,7 +167,7 @@ index 7851f3a1b..eb1011412 100644
 +		if (!target_vm) {
 +			printk("kvm error: can not find target vm\n");
 +			show_vm_vid();
-+			r = 0;
++			r = -EINVAL;
 +			break;
 +		}
 +		// translate parameter
