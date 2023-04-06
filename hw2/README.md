@@ -73,6 +73,10 @@ git apply <path of hw2.patch>
 
 ### Testing new ioctl
 
+1. 執行加入新 API 的 KVM 創建 host VM
+2. 在 host VM 中執行任意 KVM 創建 guest VM
+3.
+
 ### Code injection
 
 ## Write-up
