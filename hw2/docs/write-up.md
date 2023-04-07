@@ -34,7 +34,7 @@ note: myclient 用 Cpp 寫, 要在 host VM 下載對應 compiler
 2. 利用 `pidof sheep` 取得 process pid , ex:8473
 3. 利用 `./page-types -p <pid> -L` 取得物理分頁地址列表 , ex: ./page-types -p 8473 -L
 4. 由於程式很簡單不用思考太多, 取用第一頁物理分頁 ex: 507d4
-5. 在 host VM 執行 `objdump -S <path to sheep 執行檔>` 反編譯, 取得會跳轉的目標位置, ex: `71c:	14000000 	b	71c <main>` 可以知道主程式會不斷跳轉到 `71c` 邊移
+5. 在 host VM 執行 `objdump -S <path to sheep 執行檔>` 反編譯, 取得會跳轉的目標位置, ex: `71c:	14000000 	b	71c <main>` 可以知道主程式會不斷跳轉到 `71c` 偏移
 6. 把物理分頁補上偏移, 即為 gpa (guest physical address) , ex: 0x507d471c
 7. 編輯 host VM 中的 client, 把傳入 ioctl 參數 gpa 改成剛剛取得的 gpa 重新編譯後執行
 8. 查看 sheep 列印結果, 應該要變成 shell
