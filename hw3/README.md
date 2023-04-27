@@ -105,7 +105,7 @@ netserver -p 4444
 vim ./kvmperf/cmdline_tests/netperf.sh
 # -for _TEST in TCP_MAERTS TCP_STREAM TCP_RR; do
 # +for _TEST in TCP_STREAM TCP_RR; do
-sudo bash ./kvmperf/cmdline_tests/netperf.sh
+sudo bash ./kvmperf/cmdline_tests/netperf.sh 192.168.0.101
 ```
 
 ### test apache
@@ -114,8 +114,8 @@ note: need to set IP before
 
 ```
 # run in server
-sudo bash <path to>/kvmperf/cmdline_test/apache_install.sh
+sudo bash ./kvmperf/cmdline_tests/apache_install.sh
 # run in client
-sudo bash <path to>/kvmperf/cmdline_test/apache_install.sh
-sudo bash <path to>/kvmperf/cmdline_test/apache.sh 192.168.0.105 3 # server ip = 192.168.0.105, test three times
+sudo bash ./kvmperf/cmdline_tests/apache_install.sh
+sudo bash ./kvmperf/cmdline_tests/apache.sh 192.168.0.105 3 # server ip = 192.168.0.105, test three times
 ```
