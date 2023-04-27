@@ -105,6 +105,7 @@ netserver -p 4444
 vim ./kvmperf/cmdline_tests/netperf.sh
 # -for _TEST in TCP_MAERTS TCP_STREAM TCP_RR; do
 # +for _TEST in TCP_STREAM TCP_RR; do
+# can use `ip addr show` check your IP
 sudo bash ./kvmperf/cmdline_tests/netperf.sh 192.168.0.101
 ```
 
@@ -117,5 +118,6 @@ note: need to set IP before
 sudo bash ./kvmperf/cmdline_tests/apache_install.sh
 # run in client
 sudo bash ./kvmperf/cmdline_tests/apache_install.sh
+# can use `ip addr show` check your IP
 sudo bash ./kvmperf/cmdline_tests/apache.sh 192.168.0.101 1 # server ip = 192.168.0.101, test 1 times
 ```
