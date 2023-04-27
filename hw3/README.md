@@ -117,5 +117,5 @@ note: need to set IP before
 sudo bash ./kvmperf/cmdline_tests/apache_install.sh
 # run in client
 sudo bash ./kvmperf/cmdline_tests/apache_install.sh
-sudo bash ./kvmperf/cmdline_tests/apache.sh 192.168.0.105 3 # server ip = 192.168.0.105, test three times
+sudo bash ./kvmperf/cmdline_tests/apache.sh 192.168.0.101 1 # server ip = 192.168.0.101, test 1 times
 ```
