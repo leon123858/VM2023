@@ -63,3 +63,57 @@ test if is connect(can use in each VM)
 ping 192.168.0.105
 ping 192.168.0.101
 ```
+
+## install benchmarks for KVM
+in kvm host
+```
+git clone https://github.com/chazy/kvmperf.git
+scp -P 2222 -r ./kvmperf/ root@localhost:/root/kvmperf/
+```
+
+### test hack bench
+```
+wget https://raw.githubusercontent.com/linux-test-project/ltp/master/testcases/kernel/sched/cfs-scheduler/hackbench.c
+gcc hackbench.c -o hackbench -lpthread
+# you can adjust how many times you want to run the benchmark (how many times you run ./hackbench)
+./hackbench 50 process 50
+```
+
+### test kern bench
+```
+sudo apt install make flex bison
+wget http://ck.kolivas.org/apps/kernbench/kernbench-0.50/kernbench
+sudo chmod +x kernbench
+wget https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.15.tar.gz
+tar xfvz linux-5.15.tar.gz
+cd linux-5.15
+# the -n option specifies how many runs you would like to perform (default = 5)
+../kernbench -M -H -n 1 | tee >(grep 'Elapsed' | awk '{print $3 }' >> kernbench.txt)
+```
+
+### test netperf
+
+note: need to set IP before
+
+```
+# run in server (KVM host)
+wget http://ports.ubuntu.com/pool/multiverse/n/netperf/netperf_2.6.0-2.1_arm64.deb
+sudo dpkg -i netperf_2.6.0-2.1_arm64.deb
+# run in client (guest VM)
+vim <path to kvmperf>/kvmperf/cmdline_test/netperf.sh
+# -for _TEST in TCP_MAERTS TCP_STREAM TCP_RR; do
+# +for _TEST in TCP_STREAM TCP_RR; do
+sudo bash kvmperf/cmdline_test/netperf.sh
+```
+
+### test apache
+
+note: need to set IP before
+
+```
+# run in server
+sudo bash <path to>/kvmperf/cmdline_test/apache_install.sh
+# run in client
+sudo bash <path to>/kvmperf/cmdline_test/apache_install.sh
+sudo bash <path to>/kvmperf/cmdline_test/apache.sh 192.168.0.105 3 # server ip = 192.168.0.105, test three times
+```
