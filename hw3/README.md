@@ -96,9 +96,11 @@ cd linux-5.15
 note: need to set IP before
 
 ```
-# run in server (KVM host)
+# install tool in each VM (guest and host)
 wget http://ports.ubuntu.com/pool/multiverse/n/netperf/netperf_2.6.0-2.1_arm64.deb
 sudo dpkg -i netperf_2.6.0-2.1_arm64.deb
+# run in server (host VM)
+netserver -p 4444
 # run in client (guest VM)
 vim ./kvmperf/cmdline_tests/netperf.sh
 # -for _TEST in TCP_MAERTS TCP_STREAM TCP_RR; do
