@@ -100,10 +100,10 @@ note: need to set IP before
 wget http://ports.ubuntu.com/pool/multiverse/n/netperf/netperf_2.6.0-2.1_arm64.deb
 sudo dpkg -i netperf_2.6.0-2.1_arm64.deb
 # run in client (guest VM)
-vim <path to kvmperf>/kvmperf/cmdline_test/netperf.sh
+vim ./kvmperf/cmdline_tests/netperf.sh
 # -for _TEST in TCP_MAERTS TCP_STREAM TCP_RR; do
 # +for _TEST in TCP_STREAM TCP_RR; do
-sudo bash kvmperf/cmdline_test/netperf.sh
+sudo bash ./kvmperf/cmdline_tests/netperf.sh
 ```
 
 ### test apache
