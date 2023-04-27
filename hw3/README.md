@@ -27,3 +27,39 @@ recompile your kernel and boot the KVM host
 
 ## set VM network
 
+target is let host VM and guest VM connect into same LAN
+
+fitst build host VM
+```
+# start host VM
+sudo bash ./run-kvm.sh -k ./linux/arch/arm64/boot/Image -i ./cloud.img
+dhclient
+ip tuntap add dev tap0 mode tap
+ip link set dev tap0 up
+ip addr add 192.168.0.101 brd + dev tap0
+ip route add 192.168.0.0/24 dev tap0
+```
+note: should add below 2 line at the end of run-guest.sh
+```
+-netdev tap,id=mytap0,ifname=tap0,script=no,downscript=no,vhost=off \
+-device virtio-net-pci,netdev=mytap0 \
+```
+second build guest VM
+```
+# ssh to host VM
+ssh root@localhost -p 2222
+# start guest VM
+sudo bash ./run-guest.sh -k ./Image -i ./cloud_inner.img
+dhclient
+# find unused net device
+ip addr
+# should set enp0s3 as unused net device find by above instruction
+ip addr add 192.168.0.105 brd + dev enp0s3
+ip link set dev enp0s3 up
+ip route add 192.168.0.0/24 dev enp0s3
+```
+test if is connect(can use in each VM)
+```
+ping 192.168.0.105
+ping 192.168.0.101
+```
