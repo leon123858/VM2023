@@ -121,3 +121,13 @@ sudo bash ./kvmperf/cmdline_tests/apache_install.sh
 # can use `ip addr show` check your IP
 sudo bash ./kvmperf/cmdline_tests/apache.sh 192.168.0.101 1 # server ip = 192.168.0.101, test 1 times
 ```
+
+### performance tool install
+only need in host KVM
+```
+sudo apt-get install linux-tools-common linux-tools-generic
+rm /usr/bin/perf
+sudo ln -s /usr/lib/linux-tools/5.4.0-148-generic/perf /usr/bin/per # version of perf maybe will different
+# example command
+perf kvm --host top
+```
