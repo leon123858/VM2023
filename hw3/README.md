@@ -91,6 +91,15 @@ cd linux-5.15
 ../kernbench -M -H -n 1 | tee >(grep 'Elapsed' | awk '{print $3 }' >> kernbench.txt)
 ```
 
+### test unix bench
+```
+sudo apt install -y make gcc
+cd byte-unixbench/UnixBench
+make -j4
+sudo chmod u+x -R ./*
+sudo ./Run
+```
+
 ### test netperf
 
 note: need to set IP before
