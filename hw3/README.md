@@ -88,7 +88,7 @@ wget https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.15.tar.gz
 tar xfvz linux-5.15.tar.gz
 cd linux-5.15
 # the -n option specifies how many runs you would like to perform (default = 5)
-../kernbench -M -H -n 1 | tee >(grep 'Elapsed' | awk '{print $3 }' >> kernbench.txt)
+../kernbench -M -H -f -n 1 | tee >(grep 'Elapsed' | awk '{print $3 }' >> kernbench.txt)
 ```
 
 ### test unix bench
