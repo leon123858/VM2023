@@ -125,6 +125,8 @@ note: need to set IP before
 ```
 # run in server
 sudo bash ./kvmperf/cmdline_tests/apache_install.sh
+service apache2 stop
+service apache2 start
 # run in client
 sudo bash ./kvmperf/cmdline_tests/apache_install.sh
 # can use `ip addr show` check your IP
