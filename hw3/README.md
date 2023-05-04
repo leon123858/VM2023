@@ -94,6 +94,7 @@ cd linux-5.15
 ### test unix bench
 ```
 sudo apt install -y make gcc
+git clone https://github.com/kdlucas/byte-unixbench.git
 cd byte-unixbench/UnixBench
 make -j4
 sudo chmod u+x -R ./*
