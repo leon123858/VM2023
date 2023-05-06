@@ -3,25 +3,28 @@
 ## ENV
 
 install dependence for compile
+
 ```
 sudo apt-get install libelf-dev
 sudo apt-get install dwarves
 ```
 
 reinstall linux for target version
+
 ```
 git clone --depth 1 --branch v5.15 https://github.com/torvalds/linux.git
 cd linux
 make defconfig && make -j8 # for ARM device
 make menuconfig # config like below
 make -j8
-# x86 device 
+# x86 device
 # make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- defconfig
 # make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8
 # make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- -j8 menuconfig
 ```
+
 Go to Device Drivers -> Network device support and turn on MAC-VLAN support and MAC-
-VLAN based tap driver (turn on means make it look like <*> by hitting space). Then turn on
+VLAN based tap driver (turn on means make it look like <\*> by hitting space). Then turn on
 Device Drivers -> VHOST drivers -> Host kernel accelerator for virtio net . After that,
 recompile your kernel and boot the KVM host
 
@@ -30,6 +33,7 @@ recompile your kernel and boot the KVM host
 target is let host VM and guest VM connect into same LAN
 
 fitst build host VM
+
 ```
 # start host VM
 sudo bash ./run-kvm.sh -k ./linux/arch/arm64/boot/Image -i ./cloud.img
@@ -39,12 +43,16 @@ ip link set dev tap0 up
 ip addr add 192.168.0.101 brd + dev tap0
 ip route add 192.168.0.0/24 dev tap0
 ```
+
 note: should add below 2 line at the end of run-guest.sh
+
 ```
 -netdev tap,id=mytap0,ifname=tap0,script=no,downscript=no,vhost=off \
 -device virtio-net-pci,netdev=mytap0 \
 ```
+
 second build guest VM
+
 ```
 # ssh to host VM
 ssh root@localhost -p 2222
@@ -58,20 +66,25 @@ ip addr add 192.168.0.105 brd + dev enp0s3
 ip link set dev enp0s3 up
 ip route add 192.168.0.0/24 dev enp0s3
 ```
+
 test if is connect(can use in each VM)
+
 ```
 ping 192.168.0.105
 ping 192.168.0.101
 ```
 
 ## install benchmarks for KVM
+
 in kvm host
+
 ```
 git clone https://github.com/chazy/kvmperf.git
 scp -P 2222 -r ./kvmperf/ root@localhost:/root/kvmperf/
 ```
 
 ### test hack bench
+
 ```
 wget https://raw.githubusercontent.com/linux-test-project/ltp/master/testcases/kernel/sched/cfs-scheduler/hackbench.c
 gcc hackbench.c -o hackbench -lpthread
@@ -80,6 +93,7 @@ gcc hackbench.c -o hackbench -lpthread
 ```
 
 ### test kern bench
+
 ```
 sudo apt install make flex bison
 wget http://ck.kolivas.org/apps/kernbench/kernbench-0.50/kernbench
@@ -92,6 +106,7 @@ cd linux-5.15
 ```
 
 ### test unix bench
+
 ```
 sudo apt install -y make gcc
 git clone https://github.com/kdlucas/byte-unixbench.git
@@ -135,7 +150,9 @@ sudo bash ./kvmperf/cmdline_tests/apache.sh 192.168.0.101 1 # server ip = 192.16
 ```
 
 ### performance tool install
+
 only need in host KVM
+
 ```
 sudo apt-get install linux-tools-common linux-tools-generic
 rm /usr/bin/perf
@@ -143,3 +160,7 @@ sudo ln -s /usr/lib/linux-tools/5.4.0-148-generic/perf /usr/bin/per # version of
 # example command
 perf kvm --host top
 ```
+
+## export report
+
+vscode 右鍵 Markdown PDF: export PDF (Markdown pdf is a plugin for vscode)
