@@ -1,0 +1,38 @@
+2cpu
+root@ubuntu:~/linux-5.15# ../kernbench -M -H -f -n 1 | tee >(grep 'Elapsed' | awk '{print $3 }' >> kernbench.txt)
+2 cpus found
+Cleaning source tree...
+Making oldconfig...
+Half load is no greater than single; disabling
+Kernel 5.15.0
+Performing 1 runs of
+make -j 2
+
+All data logged to kernbench.log
+Optimal load -j 2 run number 1...
+Average Optimal load -j 2 Run (std deviation):
+Elapsed Time 2823.770000
+User Time 3906.190000
+System Time 792.380000
+Percent CPU 166.000000
+Context Switches 421765.000000
+Sleeps 32201.000000
+- - - - - -- 
+1 cpus found
+Cleaning source tree...
+Making oldconfig...
+Half load is no greater than single; disabling
+Kernel 5.15.0
+Performing 1 runs of
+make -j 1
+
+All data logged to kernbench.log
+Optimal load -j 1 run number 1...
+Average Optimal load -j 1 Run (std deviation):
+Elapsed Time 5410.880000
+User Time 3454.530000
+System Time 690.540000
+Percent CPU 76.000000
+Context Switches 522004.000000
+Sleeps 32792.000000
+
