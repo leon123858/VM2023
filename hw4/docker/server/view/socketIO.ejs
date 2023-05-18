@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<script src="/public/jquery.min.js"></script>
+<script src="/public/socketIO.min.js"></script>
+
+<head>
+  <title>
+    <%= title %>
+  </title>
+</head>
+
+<body>
+  <h1 id="t"></h1>
+</body>
+<script>
+  //連結socket.io server位置
+  var socket = io.connect('http://localhost:8080');
+
+  socket.on('message', function (data) {
+    console.log(data);
+  })
+</script>
+
+</html>
