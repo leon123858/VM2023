@@ -4,6 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
+		"dev": "export DEBUG=true && node index.js",
 		"start": "node index.js"
 	},
 	"author": "Leon Lin",

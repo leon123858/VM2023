@@ -26,7 +26,7 @@ app.use(staticServer(__dirname, 'public'));
 // socketIO
 io.on('connection', (socket) => {
 	fs.appendFileSync(
-		'./sent.txt',
+		process.env.DEBUG ? './sent.txt' : '/r11922114_servervol/sent.txt',
 		'r11922114 sending from the server\n',
 		(err) => {
 			if (err) {
@@ -58,4 +58,4 @@ router
 app.use(router.routes());
 app.listen(3000);
 server.listen(8080);
-console.log('[demo] start-quick is starting at port 3000');
+console.log('[demo] start-quick is starting at port 3000 & 8080');
