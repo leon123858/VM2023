@@ -53,3 +53,5 @@ dkms.conf
 
 # MacOS
 .DS_Store
+hw4/docker/client/received.txt
+hw4/docker/server/sent.txt
