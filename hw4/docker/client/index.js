@@ -21,7 +21,7 @@ socket.on('connect', function () {
 			}
 		);
 		socket.disconnect(true);
-		process.exit(0);
+		console.log('res:', data);
 	});
 });
 

@@ -25,9 +25,12 @@ app.use(staticServer(__dirname, 'public'));
 
 // socketIO
 io.on('connection', (socket) => {
+	const data = 'r11922114 sending from the server';
+
+	socket.emit('message', data);
 	fs.appendFileSync(
 		process.env.DEBUG ? './sent.txt' : '/r11922114_servervol/sent.txt',
-		'r11922114 sending from the server\n',
+		`${data}\n`,
 		(err) => {
 			if (err) {
 				console.error(err);
@@ -35,7 +38,6 @@ io.on('connection', (socket) => {
 			// file written successfully
 		}
 	);
-	socket.emit('message', 'r11922114 sending from the server');
 	socket.on('disconnect', function () {
 		console.log('disconnect');
 	});
