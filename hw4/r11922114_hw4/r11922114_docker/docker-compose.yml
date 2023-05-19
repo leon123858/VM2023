@@ -1,0 +1,37 @@
+version: '3.9'
+name: vm_hw4_docker_compose
+services:
+  server:
+    container_name: server
+    build: ./server/
+    ports:
+      - '3000:3000'
+      - '8080:8080'
+    volumes:
+      - r11922114_servervol:/r11922114_servervol
+    networks:
+      test_network:
+        ipv4_address: 172.16.238.10
+  client:
+    container_name: client
+    build: ./client/
+    volumes:
+      - r11922114_clientvol:/r11922114_clientvol
+    networks:
+      test_network:
+        ipv4_address: 172.16.238.11
+    environment:
+      URL: http://172.16.238.10:8080
+
+volumes: # note should be create volume
+  r11922114_servervol:
+    name: r11922114_servervol
+  r11922114_clientvol:
+    name: r11922114_clientvol
+
+networks:
+  test_network:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.238.0/24

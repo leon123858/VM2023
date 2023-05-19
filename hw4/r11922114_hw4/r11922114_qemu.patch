@@ -1,0 +1,48 @@
+diff --git a/target/arm/translate-a64.c b/target/arm/translate-a64.c
+index 9333d7be41..891d880990 100644
+--- a/target/arm/translate-a64.c
++++ b/target/arm/translate-a64.c
+@@ -14793,6 +14793,19 @@ static void aarch64_tr_translate_insn(DisasContextBase *dcbase, CPUState *cpu)
+ 
+     s->pc_curr = pc;
+     insn = arm_ldl_code(env, &s->base, pc, s->sctlr_b);
++    // VM class hw4 edition
++    if (insn == 0x2a0003f8) {
++        if((pc % (16*16*16*16)) == 0x3cec){
++            // qemu_log("map insn on pc with offset: %lx!\n",pc);
++            insn = 0x52800018;
++        }
++    }
++    else if (insn == 0x97fffd47) {
++        if((pc % (16*16*16*16)) == 0x3f34){
++            // qemu_log("map insn on pc with offset2: %lx!\n",pc);
++            insn = 0x52800000;
++        }
++    }
+     s->insn = insn;
+     s->base.pc_next = pc + 4;
+ 
+diff --git a/target/arm/translate.c b/target/arm/translate.c
+index bf2196b9e2..4b81e8abef 100644
+--- a/target/arm/translate.c
++++ b/target/arm/translate.c
+@@ -9582,6 +9582,19 @@ static void arm_tr_translate_insn(DisasContextBase *dcbase, CPUState *cpu)
+ 
+     dc->pc_curr = pc;
+     insn = arm_ldl_code(env, &dc->base, pc, dc->sctlr_b);
++    // VM class hw4 edition
++    if (insn == 0x2a0003f8) {
++        if((pc % (16*16*16*16)) == 0x3cec){
++            // qemu_log("map insn on pc with offset: %lx!\n",pc);
++            insn = 0x52800018;
++        }
++    }
++    else if (insn == 0x97fffd47) {
++        if((pc % (16*16*16*16)) == 0x3f34){
++            // qemu_log("map insn on pc with offset2: %lx!\n",pc);
++            insn = 0x52800000;
++        }
++    }
+     dc->insn = insn;
+     dc->base.pc_next = pc + 4;
+     disas_arm_insn(dc, insn);
