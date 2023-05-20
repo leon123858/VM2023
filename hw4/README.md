@@ -2,6 +2,8 @@
 
 ## Part 1
 
+please check docker/
+
 ## Part 2
 
 ### 執行
