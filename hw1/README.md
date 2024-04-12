@@ -159,6 +159,12 @@ sudo kill -9 pid
 dmesg | grep -i kvm
 ```
 
+調整 qemu disk 空間
+```
+qemu-img info <*.image>
+qemu-img resize <*.image> +7G
+```
+
 ## part 2 作業訣竅
 
 要改的虛擬機是佈置在 ubuntu linux 裡面的 VM, 不是最中間的 VM,
